@@ -37,14 +37,18 @@ router.post('/login', async (req, res) => {
 router.get('/me', async (req, res) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '');
-        const decoded = jwt.verify(token, 'secretKey');
-        const user = await User.findOne({ _id: decoded._id});
-        if (!user||user.username!==decoded.username) {
+        const decoded = jwt.verify(token, 'secretKey');  // Ensure this secret matches the one used to sign the token
+
+        const user = await User.findOne({ _id: decoded._id });
+
+        if (!user) {
             throw new Error();
         }
+
         res.send(user);
     } catch (error) {
-        res.status(401).send({ error: 'Please authenticate.' });
+        console.error(error);
+        res.status(401).send({ error: 'Please authenticate.' });  // Return authentication error
     }
 });
 
