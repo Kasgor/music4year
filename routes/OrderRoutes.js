@@ -8,14 +8,24 @@ const router = express.Router();
 
 router.post('/order/:userId', async (req, res) => {
     try {
-        const cart = await Cart.findOne({ userId: req.params.userId }).populate('items');
+        const cart = await Cart.findOne({ userId: req.params.userId })
+            .populate({
+                path: 'items',
+                populate: {
+                    path: 'product',
+                    model: 'Product'
+                }
+            });
         if (!cart) {
             return res.status(404).send({ error: 'Cart not found' });
         }
+        console.log(cart);
 
         const order = new Order({
             userId: req.params.userId,
-            cart: cart._id
+            cart: cart._id,
+            status:"completed"
+
         });
 
         await order.save();
@@ -32,7 +42,8 @@ router.get('/order/:orderId', async (req, res) => {
             path: 'cart',
             populate: {
                 path: 'items',
-                populate: { path: 'product' }
+                populate: { path: 'product',
+                    model: 'Product'}
             }
         });
 

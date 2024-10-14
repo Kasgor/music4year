@@ -11,7 +11,7 @@ const orderSchema = new mongoose.Schema({
 
 // Method to get order details
 orderSchema.methods.getOrderDetails = function(orderId) {
-    // Logic to return order details
+
     return this;
 };
 
