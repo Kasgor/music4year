@@ -62,4 +62,24 @@ router.delete('/:userId/items/:productId', async (req, res) => {
     }
 });
 
+router.put('/:userId/items/:productId', async (req, res) => {
+    try {
+        const cart = await Cart.findOne({ userId: req.params.userId });
+        if (!cart) {
+            return res.status(404).send({ error: 'Cart not found' });
+        }
+
+        const updatedQuantity = req.body.quantity;
+        if (updatedQuantity <= 0) {
+            return res.status(400).send({ error: 'Quantity must be greater than 0' });
+        }
+
+        await cart.updateItemQuantity(req.params.productId, updatedQuantity);
+
+        res.status(200).send(cart);
+    } catch (error) {
+        res.status(500).send({ error: 'Failed to update item quantity in cart' });
+    }
+});
+
 module.exports = router;

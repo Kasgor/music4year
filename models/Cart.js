@@ -28,6 +28,23 @@ cartSchema.methods.removeItem = async function(productId) {
     await this.save();
 };
 
+cartSchema.methods.updateItemQuantity = async function (productId, newQuantity) {
+    await this.populate({
+        path: 'items',
+        populate: {
+            path: 'product',
+            model: 'Product'
+        }
+    });
+    const cartItem = this.items.find(item => item.product._id.toString() === productId);
+
+    if (!cartItem) {
+        throw new Error('Item not found in cart');
+    }
+    cartItem.quantity = newQuantity;
+    await this.save();
+};
+
 //not tested
 cartSchema.methods.getTotal = async function() {
     await this.populate({
