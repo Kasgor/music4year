@@ -68,11 +68,14 @@ router.put('/:userId/items/:productId', async (req, res) => {
         if (!cart) {
             return res.status(404).send({ error: 'Cart not found' });
         }
+        console.log(cart);
 
         const updatedQuantity = req.body.quantity;
+       // console.log(updatedQuantity);
         if (updatedQuantity <= 0) {
             return res.status(400).send({ error: 'Quantity must be greater than 0' });
         }
+        //console.log(req.params.productId);
 
         await cart.updateItemQuantity(req.params.productId, updatedQuantity);
 

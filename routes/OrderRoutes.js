@@ -29,6 +29,7 @@ router.post('/order/:userId', async (req, res) => {
         });
 
         await order.save();
+        await Cart.findOneAndDelete({ userId: req.params.userId });
 
         res.status(201).send(order);
     } catch (error) {

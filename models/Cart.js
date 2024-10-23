@@ -42,6 +42,7 @@ cartSchema.methods.updateItemQuantity = async function (productId, newQuantity) 
         throw new Error('Item not found in cart');
     }
     cartItem.quantity = newQuantity;
+    console.log("quantity")
     await this.save();
 };
 
