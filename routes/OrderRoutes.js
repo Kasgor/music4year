@@ -17,6 +17,7 @@ router.post('/order/:userId', async (req, res) => {
                 }
             });
         if (!cart) {
+            console.log(`Cart not found`);
             return res.status(404).send({ error: 'Cart not found' });
         }
         console.log(cart);
@@ -39,14 +40,7 @@ router.post('/order/:userId', async (req, res) => {
 
 router.get('/order/:orderId', async (req, res) => {
     try {
-        const order = await Order.findById(req.params.orderId).populate({
-            path: 'cart',
-            populate: {
-                path: 'items',
-                populate: { path: 'product',
-                    model: 'Product'}
-            }
-        });
+        const order = await Order.findById(req.params.orderId)
 
         if (!order) {
             return res.status(404).send({ error: 'Order not found' });
