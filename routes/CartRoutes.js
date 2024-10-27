@@ -1,5 +1,6 @@
 const express = require('express');
 const Cart = require('../models/cart');
+const User = require('../models/user');
 const CartItem = require('../models/cartItem');
 const Product = require('../models/product');
 const router = express.Router();
@@ -18,7 +19,10 @@ router.post('/:userId/items', async (req, res) => {
         });
 
         await cartItem.save();
-
+        let user = await User.findOne({_id: req.params.userId});
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
         let cart = await Cart.findOne({ userId: req.params.userId });
         if (!cart) {
             cart = new Cart({ userId: req.params.userId, items: [] });
@@ -26,6 +30,14 @@ router.post('/:userId/items', async (req, res) => {
 
         cart.addItem(cartItem);
         await cart.save();
+
+        await cart.populate({
+            path: 'items',
+            populate: {
+                path: 'product',
+                model: 'Product'
+            }
+        });
 
         res.status(200).send(cart);
     } catch (error) {
